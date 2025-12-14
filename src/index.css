@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* Self-hosted Nexa Bold (place Nexa-Bold.woff2/woff in /public/fonts/) */
+@font-face {
+  font-family: 'Nexa';
+  src: url('/fonts/Nexa-Bold.woff2') format('woff2'),
+       url('/fonts/Nexa-Bold.woff') format('woff'),
+       url('/fonts/Nexa-Bold.otf') format('opentype'),
+       local('Nexa Bold'), local('Nexa-Bold');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback when Nexa isn't available: Outfit from Google Fonts */
+/* Outfit is already imported above */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 92%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 92%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 92%;
+
+    --primary: 32 95% 65%;
+    --primary-foreground: 0 0% 3%;
+
+    --secondary: 340 75% 58%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 200 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 14%;
+    --input: 0 0% 12%;
+    --ring: 32 95% 65%;
+
+    --radius: 0.625rem;
+
+    /* Neon palette */
+    --neon-pink: 340 75% 58%;
+    --neon-orange: 32 95% 65%;
+    --neon-blue: 200 80% 55%;
+    --neon-green: 155 70% 50%;
+
+    /* Subtle surface colors */
+    --surface-1: 0 0% 5%;
+    --surface-2: 0 0% 8%;
+    --surface-3: 0 0% 11%;
+
+    /* Typography */
+    /* Heading / display font: Nexa Bold (local) with Outfit fallback */
+    --font-display: 'Nexa', 'Outfit', system-ui, sans-serif;
+    /* Body text uses Outfit */
+    --font-body: 'Outfit', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Spacing scale */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 4rem;
+    --space-3xl: 6rem;
+
+    /* Shadows */
+    --shadow-subtle: 0 1px 2px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 4px 12px hsl(0 0% 0% / 0.4);
+    --shadow-glow-orange: 0 0 40px hsl(32 95% 65% / 0.15);
+    --shadow-glow-pink: 0 0 40px hsl(340 75% 58% / 0.15);
+    --shadow-glow-blue: 0 0 40px hsl(var(--neon-blue) / 0.15);
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    /* Use an extra-heavy weight for large display headings */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Ensure utility class `font-display` uses the display font */
+  .font-display {
+    font-family: var(--font-display) !important;
+    font-weight: 800;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  code {
+    @apply font-mono;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(180deg, hsl(20 90% 92%), hsl(15 90% 88%));
+  }
+
+  .text-gradient-soft {
+    color: hsl(20 90% 92%);
+    -webkit-text-fill-color: hsl(20 90% 92%);
+  }
+
+  .text-gradient-subtle {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--muted-foreground)));
+  }
+
+  /* Triangle decorative grid used in hero */
+  .hero-triangles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(5.5rem, 10vw));
+    grid-auto-rows: minmax(5.5rem, 10vw);
+    gap: 1.5rem;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .hero-triangle {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background-image: linear-gradient(180deg, hsl(var(--neon-orange)), hsl(var(--neon-pink)));
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transform-origin: 50% 40%;
+    opacity: 0;
+    /* Fade in after 3s + per-triangle delay, then start floating after fade completes */
+    animation: triangleFadeIn 0.6s ease-out calc(3s + var(--triangle-delay, 0s)) forwards,
+               triangleFloat 6s ease-in-out calc(3.6s + var(--triangle-delay, 0s)) infinite;
+  }
+
+  @keyframes triangleFloat {
+    0% { transform: translateY(0) scale(1); }
+    35% { transform: translateY(-14px) scale(1.02); }
+    70% { transform: translateY(-6px) scale(0.995); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  @keyframes triangleFadeIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Small bouncing animation for letters like 'i' */
+  .letter-bob {
+    display: inline-block;
+    transform-origin: center bottom;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-6px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-4px); }
+    100% { transform: translateY(0); }
+  }
+
+
+  .surface-elevated {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--surface-2)) 0%,
+      hsl(var(--surface-1)) 100%
+    );
+    border: 1px solid hsl(var(--border));
+  }
+
+  .surface-interactive {
+    background: hsl(var(--surface-1));
+    border: 1px solid hsl(var(--border));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .surface-interactive:hover {
+    background: hsl(var(--surface-2));
+    border-color: hsl(var(--border) / 0.8);
+    transform: translateY(-2px);
+  }
+
+  .code-syntax {
+    @apply font-mono text-muted-foreground tracking-tight;
+    font-size: 0.9em;
+  }
+
+  .code-syntax .highlight {
+    color: hsl(var(--neon-orange));
+  }
+
+  .glow-subtle {
+    box-shadow: var(--shadow-glow-orange);
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--border)) 20%,
+      hsl(var(--border)) 80%,
+      transparent 100%
+    );
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium text-sm;
+    background: linear-gradient(135deg, hsl(var(--neon-blue)), hsl(var(--neon-blue) / 0.9));
+    color: hsl(var(--background));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glow-blue);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm;
+    background: hsl(var(--neon-orange));
+    color: hsl(var(--background));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-secondary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-sm;
+    color: hsl(var(--muted-foreground));
+    transition: all 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--surface-2));
+  }
+
+  .card-hover {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px hsl(0 0% 0% / 0.3);
+  }
+
+  .link-underline {
+    position: relative;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.2s ease;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: hsl(var(--primary));
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .link-underline:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}

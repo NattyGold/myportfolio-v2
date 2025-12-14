@@ -1,0 +1,6 @@
+node_modules
+
+# Licensed fonts - do not commit unless you have permission
+/public/fonts/*.woff
+/public/fonts/*.woff2
+/public/fonts/*.otf
